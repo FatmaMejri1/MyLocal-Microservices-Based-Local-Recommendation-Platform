@@ -1,0 +1,114 @@
+services:
+  # 1. API Gateway / Root Project
+  gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:80"
+    environment:
+      APP_ENV: dev
+      APP_SECRET: ${APP_SECRET:-change_me_in_prod}
+
+  # 2. User Service
+  user-service:
+    build:
+      context: ./user-service
+      dockerfile: Dockerfile
+    ports:
+      - "8001:80"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-app}:${POSTGRES_PASSWORD:-!ChangeMe!}@user-database:5432/${POSTGRES_DB:-app}
+      APP_ENV: dev
+      APP_SECRET: ${APP_SECRET:-change_me_in_prod}
+    depends_on:
+      user-database:
+        condition: service_healthy
+
+  user-database:
+    image: postgres:${POSTGRES_VERSION:-16}-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-app}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-!ChangeMe!}
+      POSTGRES_USER: ${POSTGRES_USER:-app}
+    healthcheck:
+      test: ["CMD", "pg_isready", "-d", "${POSTGRES_DB:-app}", "-U", "${POSTGRES_USER:-app}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    volumes:
+      - user_database_data:/var/lib/postgresql/data:rw
+
+  # 3. Content Service
+  content-service:
+    build:
+      context: ./content-service
+      dockerfile: Dockerfile
+    ports:
+      - "8002:80"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-app}:${POSTGRES_PASSWORD:-!ChangeMe!}@content-database:5432/${POSTGRES_DB:-app}
+      APP_ENV: dev
+      APP_SECRET: ${APP_SECRET:-change_me_in_prod}
+    depends_on:
+      content-database:
+        condition: service_healthy
+
+  content-database:
+    image: postgres:${POSTGRES_VERSION:-16}-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-app}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-!ChangeMe!}
+      POSTGRES_USER: ${POSTGRES_USER:-app}
+    healthcheck:
+      test: ["CMD", "pg_isready", "-d", "${POSTGRES_DB:-app}", "-U", "${POSTGRES_USER:-app}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    volumes:
+      - content_database_data:/var/lib/postgresql/data:rw
+
+  # 4. Media Service
+  media-service:
+    build:
+      context: ./media-service
+      dockerfile: Dockerfile
+    ports:
+      - "8003:80"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-app}:${POSTGRES_PASSWORD:-!ChangeMe!}@media-database:5432/${POSTGRES_DB:-app}
+      APP_ENV: dev
+      APP_SECRET: ${APP_SECRET:-change_me_in_prod}
+    depends_on:
+      media-database:
+        condition: service_healthy
+
+  media-database:
+    image: postgres:${POSTGRES_VERSION:-16}-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-app}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-!ChangeMe!}
+      POSTGRES_USER: ${POSTGRES_USER:-app}
+    healthcheck:
+      test: ["CMD", "pg_isready", "-d", "${POSTGRES_DB:-app}", "-U", "${POSTGRES_USER:-app}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    volumes:
+      - media_database_data:/var/lib/postgresql/data:rw
+
+  # 5. Frontend
+  frontend:
+    build:
+      context: ./mylocal-frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+
+volumes:
+  user_database_data:
+  content_database_data:
+  media_database_data:
