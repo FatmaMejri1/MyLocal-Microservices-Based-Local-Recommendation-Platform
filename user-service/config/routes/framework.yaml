@@ -1,0 +1,5 @@
+# Error routes are handled automatically by Symfony
+# when@dev:
+#     _errors:
+#         resource: '@FrameworkBundle/Resources/config/routing/errors.php'
+#         prefix: /_error

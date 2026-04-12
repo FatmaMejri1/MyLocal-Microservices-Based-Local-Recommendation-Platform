@@ -1,0 +1,11 @@
+.git
+vendor/
+var/
+public/bundles/
+public/build/
+phpunit.xml.dist
+phpstan.dist.neon
+.phpunit.result.cache
+.gitignore
+compose.override.yaml
+migration_error.txt
