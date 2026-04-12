@@ -1,0 +1,597 @@
+/* PlacesPage.css - Professional & Responsive */
+
+:root {
+    --primary-color: #0f172a;
+    /* Slate 900 */
+    --accent-color: #3b82f6;
+    /* Blue 500 */
+    --bg-color: #f8fafc;
+    /* Slate 50 */
+    --card-bg: #ffffff;
+    --text-primary: #1e293b;
+    /* Slate 800 */
+    --text-secondary: #64748b;
+    /* Slate 500 */
+    --border-color: #e2e8f0;
+    /* Slate 200 */
+    --success-color: #10b981;
+}
+
+.places-page {
+    min-height: 100vh;
+    background-color: var(--bg-color);
+    padding-top: 80px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.places-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 32px;
+    max-width: 1440px;
+    /* Constrain max width for better readability */
+    margin: 0 auto;
+    padding: 24px 32px;
+    height: calc(100vh - 80px);
+    /* Fill viewport minus navbar */
+    overflow: hidden;
+    /* Prevent body scroll if inner scroll is used */
+}
+
+/* --- SIDEBAR FILTERS --- */
+.filters-panel {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 24px;
+    height: 100%;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+.filters-panel::-webkit-scrollbar {
+    width: 6px;
+}
+
+.filters-panel::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 4px;
+}
+
+.filter-group h3 {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    color: var(--text-primary);
+    cursor: pointer;
+    margin-bottom: 12px;
+    transition: color 0.2s;
+}
+
+.checkbox-label:hover {
+    color: var(--accent-color);
+}
+
+.checkbox-label input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--accent-color);
+    border: 2px solid var(--border-color);
+    border-radius: 4px;
+}
+
+/* Price Range Buttons */
+.price-range {
+    display: flex;
+    gap: 4px;
+    background: var(--bg-color);
+    padding: 4px;
+    border-radius: 8px;
+}
+
+.price-btn {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 8px 0;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.price-btn:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.price-btn.active {
+    background: var(--card-bg);
+    color: var(--accent-color);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Range Slider */
+input[type=range] {
+    width: 100%;
+    accent-color: var(--accent-color);
+    height: 6px;
+    border-radius: 3px;
+    background: #cbd5e1;
+}
+
+/* --- MAIN CONTENT --- */
+.results-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    height: 100%;
+    overflow: hidden;
+    /* Important for inner scrolling */
+}
+
+/* Search Bar - Floating & Professional */
+.search-bar-wrapper {
+    position: relative;
+    z-index: 20;
+}
+
+.search-input-container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--card-bg);
+    padding: 14px 24px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+.search-input-container:focus-within {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border-color: var(--accent-color);
+}
+
+.search-input-container input {
+    border: none;
+    flex: 1;
+    font-size: 16px;
+    color: var(--text-primary);
+    outline: none;
+}
+
+.search-input-container input::placeholder {
+    color: #94a3b8;
+}
+
+/* Autocomplete */
+.autocomplete-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border-radius: 12px;
+    margin-top: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    z-index: 50;
+}
+
+.autocomplete-item {
+    padding: 12px 16px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.2s;
+    color: var(--text-primary);
+}
+
+.autocomplete-item:hover {
+    background: var(--bg-color);
+}
+
+/* Categories - Chip Style */
+.categories-carousel {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding: 4px 2px;
+    scrollbar-width: none;
+    /* Hide scrollbar Firefox */
+}
+
+.categories-carousel::-webkit-scrollbar {
+    display: none;
+    /* Hide scrollbar Chrome/Safari */
+}
+
+.category-chip {
+    flex-shrink: 0;
+    padding: 8px 16px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.category-chip:hover {
+    background: #f1f5f9;
+    color: var(--text-primary);
+}
+
+.category-chip.active {
+    background: var(--accent-color);
+    color: white;
+    border-color: var(--accent-color);
+}
+
+/* Results Info */
+.results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 4px;
+}
+
+.results-header h2 {
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+/* GRID LAYOUT */
+.places-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 4px;
+    padding-bottom: 40px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    /* Responsive Grid */
+    gap: 24px;
+    align-content: start;
+}
+
+.places-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.places-list::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+/* CARD DESIGN - Professional */
+.place-card-pro {
+    background: var(--card-bg);
+    border-radius: 12px;
+    /* Slightly tighter radius */
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+}
+
+.place-card-pro:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.06);
+    border-color: #cbd5e1;
+}
+
+.card-img-wrapper {
+    height: 180px;
+    position: relative;
+    overflow: hidden;
+}
+
+.card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.place-card-pro:hover .card-img {
+    transform: scale(1.03);
+}
+
+.card-status {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: rgba(255, 255, 255, 0.95);
+    color: var(--success-color);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-favorite {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    backdrop-filter: blur(4px);
+}
+
+.btn-favorite:hover {
+    background: white;
+    transform: scale(1.1);
+}
+
+.card-info {
+    padding: 16px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 4px;
+}
+
+.card-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.4;
+    margin: 0;
+}
+
+.rating-pill {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #b45309;
+    background: #fffbeb;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.card-meta {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.card-tags {
+    margin-top: auto;
+    /* Push to bottom of content area */
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+
+.tag {
+    font-size: 12px;
+    color: var(--text-secondary);
+    background: #f1f5f9;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.btn-details {
+    width: 100%;
+    padding: 10px;
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-weight: 500;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.2s;
+    font-size: 14px;
+    display: block;
+}
+
+.btn-details:hover {
+    background: var(--text-primary);
+    color: white;
+    border-color: var(--text-primary);
+}
+
+/* Map Panel */
+.map-panel {
+    display: none;
+}
+
+.mobile-toggle-view {
+    display: none;
+}
+
+/* --- RESPONSIVE --- */
+
+/* --- RESPONSIVE --- */
+@media (max-width: 1024px) {
+    .places-layout {
+        grid-template-columns: 240px 1fr;
+        gap: 20px;
+        padding: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .places-layout {
+        grid-template-columns: 1fr;
+        padding: 16px;
+        display: block;
+        /* Stack */
+        height: auto;
+        overflow: visible;
+    }
+
+    .filters-panel {
+        display: none;
+        /* Hide default sidebar */
+    }
+
+    /* Toggle filter visibility logic can be added here or in JSX */
+    .filters-panel.active {
+        display: flex;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 80%;
+        height: 100vh;
+        z-index: 100;
+        border-radius: 0;
+        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .results-panel {
+        overflow: visible;
+    }
+
+    .places-list {
+        grid-template-columns: 1fr;
+        /* Single column */
+        overflow: visible;
+        padding-bottom: 80px;
+    }
+
+    .mobile-toggle-view {
+        display: flex;
+        position: fixed;
+        bottom: 24px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 100px;
+        font-weight: 600;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        z-index: 50;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+    }
+}
+
+display: flex;
+align-items: center;
+gap: 6px;
+}
+
+.card-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.tag {
+    background: #f1f5f9;
+    color: #475569;
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+/* --- MAP PANEL UI (Right column on huge screens or toggle on mobile) --- */
+.map-panel {
+    display: none;
+    /* Hidden by default until we have map logic */
+}
+
+/* Mobile Toggle */
+.mobile-toggle-view {
+    display: none;
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1e293b;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-weight: 600;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    z-index: 100;
+    align-items: center;
+    gap: 8px;
+}
+
+/* RESPONSIVE */
+@media (min-width: 1400px) {
+    /* on huge screens, maybe show 3 columns if map enabled */
+}
+
+@media (max-width: 1024px) {
+    .places-layout {
+        grid-template-columns: 240px 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .places-layout {
+        grid-template-columns: 1fr;
+        padding: 16px;
+        height: auto;
+        overflow: visible;
+        display: block;
+        /* Stack */
+    }
+
+    .filters-panel {
+        display: none;
+        /* Hide filters on mobile for now or make collapsible */
+    }
+
+    .places-list {
+        overflow: visible;
+        grid-template-columns: 1fr;
+    }
+
+    .mobile-toggle-view {
+        display: flex;
+    }
+}
