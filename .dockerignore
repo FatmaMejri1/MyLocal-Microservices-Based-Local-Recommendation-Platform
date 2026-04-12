@@ -1,0 +1,17 @@
+.git
+vendor/
+var/
+public/bundles/
+public/build/
+phpunit.xml.dist
+phpstan.dist.neon
+.phpunit.result.cache
+.gitignore
+compose.override.yaml
+
+# Ignore all sub-microservices folders
+content-service/
+media-service/
+mylocal-frontend/
+user-service/
+MyLocal-Microservices-Based-Local-Recommendation-Platform/
