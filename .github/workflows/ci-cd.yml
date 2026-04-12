@@ -1,0 +1,146 @@
+name: MyLocal CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  DOCKERHUB_USERNAME: fatma111
+
+jobs:
+  # ================================
+  # JOB 1: Build and Push Images
+  # ================================
+  build-and-push:
+    name: Build & Push Docker Images
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Build and push Gateway
+      - name: Build and Push Gateway
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          dockerfile: Dockerfile
+          push: true
+          tags: |
+            ${{ env.DOCKERHUB_USERNAME }}/mylocal-gateway:latest
+            ${{ env.DOCKERHUB_USERNAME }}/mylocal-gateway:${{ github.sha }}
+
+      # Build and push User Service
+      - name: Build and Push User Service
+        uses: docker/build-push-action@v5
+        with:
+          context: ./user-service
+          dockerfile: ./user-service/Dockerfile
+          push: true
+          tags: |
+            ${{ env.DOCKERHUB_USERNAME }}/mylocal-user-service:latest
+            ${{ env.DOCKERHUB_USERNAME }}/mylocal-user-service:${{ github.sha }}
+
+      # Build and push Content Service
+      - name: Build and Push Content Service
+        uses: docker/build-push-action@v5
+        with:
+          context: ./content-service
+          dockerfile: ./content-service/Dockerfile
+          push: true
+          tags: |
+            ${{ env.DOCKERHUB_USERNAME }}/mylocal-content-service:latest
+            ${{ env.DOCKERHUB_USERNAME }}/mylocal-content-service:${{ github.sha }}
+
+      # Build and push Media Service
+      - name: Build and Push Media Service
+        uses: docker/build-push-action@v5
+        with:
+          context: ./media-service
+          dockerfile: ./media-service/Dockerfile
+          push: true
+          tags: |
+            ${{ env.DOCKERHUB_USERNAME }}/mylocal-media-service:latest
+            ${{ env.DOCKERHUB_USERNAME }}/mylocal-media-service:${{ github.sha }}
+
+      # Build and push Frontend
+      - name: Build and Push Frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./mylocal-frontend
+          dockerfile: ./mylocal-frontend/Dockerfile
+          push: true
+          tags: |
+            ${{ env.DOCKERHUB_USERNAME }}/mylocal-frontend:latest
+            ${{ env.DOCKERHUB_USERNAME }}/mylocal-frontend:${{ github.sha }}
+
+  # ================================
+  # JOB 2: Test
+  # ================================
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    needs: build-and-push
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: pdo, pdo_pgsql, intl, zip
+
+      - name: Install Gateway dependencies
+        run: composer install --no-interaction --no-progress
+        working-directory: .
+
+      - name: Install User Service dependencies
+        run: composer install --no-interaction --no-progress
+        working-directory: ./user-service
+
+      - name: Install Content Service dependencies
+        run: composer install --no-interaction --no-progress
+        working-directory: ./content-service
+
+      - name: Install Media Service dependencies
+        run: composer install --no-interaction --no-progress
+        working-directory: ./media-service
+
+  # ================================
+  # JOB 3: Deploy (GitOps)
+  # ================================
+  deploy:
+    name: Deploy to Server
+    runs-on: ubuntu-latest
+    needs: [build-and-push, test]
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          script: |
+            cd ~/Gitops-Project/MyLocal-Microservices-Based-Local-Recommendation-Platform
+            git pull origin main
+            podman-compose pull
+            podman-compose up -d
+            echo "Deployment complete!"
