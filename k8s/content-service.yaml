@@ -19,13 +19,18 @@ spec:
         ports:
         - containerPort: 80
         env:
-        - name: DATABASE_URL
-          value: "postgresql://app:!ChangeMe!@content-database:5432/app"
-        - name: APP_SECRET
+        - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
               name: db-credentials
               key: POSTGRES_PASSWORD
+        - name: DATABASE_URL
+          value: "postgresql://app:$(POSTGRES_PASSWORD)@content-database:5432/app"
+        - name: APP_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: db-credentials
+              key: APP_SECRET
 ---
 apiVersion: v1
 kind: Service
