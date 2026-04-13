@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: gateway
-        image: fatma111/mylocal-gateway:latest
+        image: fatma111/mylocal-gateway:f2897ea88cbaeedabaf74efd8e43cc35cadbfa56
         ports:
         - containerPort: 80
         env:

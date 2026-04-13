@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: fatma111/mylocal-frontend:latest
+        image: fatma111/mylocal-frontend:f2897ea88cbaeedabaf74efd8e43cc35cadbfa56
         ports:
         - containerPort: 80
 ---
