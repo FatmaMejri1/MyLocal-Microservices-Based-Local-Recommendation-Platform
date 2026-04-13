@@ -18,6 +18,14 @@ spec:
         image: fatma111/mylocal-media-service:latest
         ports:
         - containerPort: 80
+        env:
+        - name: DATABASE_URL
+          value: "postgresql://app:!ChangeMe!@media-database:5432/app"
+        - name: APP_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: db-credentials
+              key: POSTGRES_PASSWORD
 ---
 apiVersion: v1
 kind: Service
