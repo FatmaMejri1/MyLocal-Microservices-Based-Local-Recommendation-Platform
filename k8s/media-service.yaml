@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: media-service
-        image: fatma111/mylocal-media-service:d1bec81fe74c93428d5cc873b55b2ddb03635b79
+        image: fatma111/mylocal-media-service:70470b8ad61d18f914b371b45c43873d667e3afb
         ports:
         - containerPort: 80
         env:

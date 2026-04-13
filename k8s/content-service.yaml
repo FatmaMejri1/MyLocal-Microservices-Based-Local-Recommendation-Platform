@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: content-service
-        image: fatma111/mylocal-content-service:d1bec81fe74c93428d5cc873b55b2ddb03635b79
+        image: fatma111/mylocal-content-service:70470b8ad61d18f914b371b45c43873d667e3afb
         ports:
         - containerPort: 80
         env:
