@@ -1,0 +1,65 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: media-database-pvc
+  namespace: mylocal
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: media-database
+  namespace: mylocal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: media-database
+  template:
+    metadata:
+      labels:
+        app: media-database
+    spec:
+      containers:
+      - name: media-database
+        image: postgres:16-alpine
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_DB
+          value: "app"
+        - name: POSTGRES_USER
+          value: "app"
+        - name: POSTGRES_PASSWORD
+          value: "!ChangeMe!"
+        volumeMounts:
+        - name: media-database-storage
+          mountPath: /var/lib/postgresql/data
+        readinessProbe:
+          exec:
+            command: ["pg_isready", "-d", "app", "-U", "app"]
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 5
+      volumes:
+      - name: media-database-storage
+        persistentVolumeClaim:
+          claimName: media-database-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: media-database
+  namespace: mylocal
+spec:
+  selector:
+    app: media-database
+  ports:
+  - port: 5432
+    targetPort: 5432

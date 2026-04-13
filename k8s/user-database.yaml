@@ -1,0 +1,65 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: user-database-pvc
+  namespace: mylocal
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-database
+  namespace: mylocal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-database
+  template:
+    metadata:
+      labels:
+        app: user-database
+    spec:
+      containers:
+      - name: user-database
+        image: postgres:16-alpine
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_DB
+          value: "app"
+        - name: POSTGRES_USER
+          value: "app"
+        - name: POSTGRES_PASSWORD
+          value: "!ChangeMe!"
+        volumeMounts:
+        - name: user-database-storage
+          mountPath: /var/lib/postgresql/data
+        readinessProbe:
+          exec:
+            command: ["pg_isready", "-d", "app", "-U", "app"]
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 5
+      volumes:
+      - name: user-database-storage
+        persistentVolumeClaim:
+          claimName: user-database-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-database
+  namespace: mylocal
+spec:
+  selector:
+    app: user-database
+  ports:
+  - port: 5432
+    targetPort: 5432

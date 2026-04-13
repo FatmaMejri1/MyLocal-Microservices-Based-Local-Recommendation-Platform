@@ -1,0 +1,65 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: content-database-pvc
+  namespace: mylocal
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: content-database
+  namespace: mylocal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: content-database
+  template:
+    metadata:
+      labels:
+        app: content-database
+    spec:
+      containers:
+      - name: content-database
+        image: postgres:16-alpine
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_DB
+          value: "app"
+        - name: POSTGRES_USER
+          value: "app"
+        - name: POSTGRES_PASSWORD
+          value: "!ChangeMe!"
+        volumeMounts:
+        - name: content-database-storage
+          mountPath: /var/lib/postgresql/data
+        readinessProbe:
+          exec:
+            command: ["pg_isready", "-d", "app", "-U", "app"]
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 5
+      volumes:
+      - name: content-database-storage
+        persistentVolumeClaim:
+          claimName: content-database-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: content-database
+  namespace: mylocal
+spec:
+  selector:
+    app: content-database
+  ports:
+  - port: 5432
+    targetPort: 5432
