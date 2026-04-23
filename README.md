@@ -1,4 +1,4 @@
-# 🌍 MyLocal+ — Microservices Local Recommendation Platform
+#  MyLocal+ — Microservices Local Recommendation Platform
 
 [![CI/CD Pipeline](https://github.com/FatmaMejri1/MyLocal-Microservices-Based-Local-Recommendation-Platform/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/FatmaMejri1/MyLocal-Microservices-Based-Local-Recommendation-Platform/actions)
 ![GitHub Actions](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white)
@@ -368,4 +368,10 @@ All images are published to Docker Hub under `fatma111/`:
 ## 👩‍💻 Author
 
 **Fatma Mejri**
-GitHub: [@FatmaMejri1](https://github.com/FatmaMejri1)                                                        © 2026 Fatma Mejri. All rights reserved.
+GitHub: [@FatmaMejri1](https://github.com/FatmaMejri1)     
+
+## 📄 License
+
+This project is **not open source**.  
+All rights reserved © 2026 Fatma Mejri.  
+Unauthorized copying, modification, or distribution is strictly prohibited.
